@@ -56,7 +56,7 @@ def decode_txt(input_path: str, key: str, encoding='utf-8') -> str:
     return decode_file(input_path, key).decode(encoding)
 
 
-def decode_image(input_path: str, key: str):
+def decode_image(input_path: str, key: str) -> Image:
     return Image.open(decode_file(input_path, key))
 
 
