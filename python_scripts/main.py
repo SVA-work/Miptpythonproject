@@ -1,8 +1,10 @@
 import crypter
+from python_scripts.application import ApplicationMainWindow
 
 
 def main():
-    print("ok")
+    app = ApplicationMainWindow()
+    app.run()
 
 
 if __name__ == '__main__':
