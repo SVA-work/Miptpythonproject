@@ -13,7 +13,7 @@ def _apply_coding(inp: bytes, key: bytes) -> bytes:
 
     result = []
     for i, ch in enumerate(inp):
-        result.append((ch ^ key[i % len(key)]).to_bytes())
+        result.append((ch ^ key[i % len(key)]).to_bytes(1, 'big', False))
     return b''.join(result)
 
 
@@ -28,7 +28,7 @@ def encode_file(input_path: str, key: str, output_path: str, **kwargs):
         raise CrypterException("Key must contain only ascii chars")
     result = _apply_coding(inp, b_key)
 
-    if kwargs.get('allow_rewrite', default=False) and path.exists(output_path):
+    if kwargs.get('allow_rewrite', False) and path.exists(output_path):
         raise CrypterException("Output file already exists. You can allow rewriting files with 'allow_rewrite=True'")
     if not path.exists(path.dirname(output_path)):
         raise CrypterException("Directory of output file doesn't exists")
@@ -36,7 +36,7 @@ def encode_file(input_path: str, key: str, output_path: str, **kwargs):
     with open(output_path, 'wb') as out:
         out.write(result)
 
-    if kwargs.get('delete_input', default=False):
+    if kwargs.get('delete_input', False):
         os.remove(input_path)
 
 
