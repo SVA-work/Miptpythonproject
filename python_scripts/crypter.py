@@ -13,7 +13,7 @@ def _apply_coding(inp: bytes, key: bytes) -> bytes:
 
     result = []
     for i, ch in enumerate(inp):
-        result.append(ch ^ key[i % len(key)])
+        result.append((ch ^ key[i % len(key)]).to_bytes())
     return b''.join(result)
 
 

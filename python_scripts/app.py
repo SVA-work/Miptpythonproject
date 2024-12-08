@@ -1,13 +1,15 @@
+import re
 import tkinter as tk
 from os import path
 import tkinter.filedialog as fd
 import tkinter.messagebox as mb
-from crypter import CrypterException, encode_file
+from crypter import CrypterException, encode_file, decode_txt, decode_image
 
 
 class Window(tk.Toplevel):
     filetypes = (
         ("Текстовый файл", "*.txt"),
+        ("Изображение", "*.jpg *.jpeg *.gif *.png *.bmp *.svg *.eps *.tif")
     )
 
     def __init__(self, parent: tk.Tk):
@@ -42,6 +44,12 @@ class Window(tk.Toplevel):
             initialdir="/",
             filetypes=self.filetypes
         )
+
+    def check_format(self, filename: str) -> str:
+        if ".txt" in filename:
+            return "TEXT"
+        else:
+            return "IMAGE"
 
     def show_error(self, msg: str) -> None:
         mb.showerror("Ошибка", msg)
@@ -82,14 +90,13 @@ class EncryptWindow(Window):
             self.show_error("Ключ не указан, пожалуйста, введите значение")
             return
         elif not path.isfile(self.read_entry.get()):
-            self.show_error("Файла, который вы хотите зашифровать, не существует")
+            self.show_error("Файл, который вы хотите зашифровать, не существует")
             return
 
         input = self.read_entry.get()
         out = self.write_entry.get()
         key = self.key_entry.get()
-        kwargs = {"allow_rewrite": (not self.write_entry.get())}
-        encode_file(input, key, out, **kwargs)
+        kwargs = {"allow_rewrite": True}
 
         try:
             encode_file(input, key, out, **kwargs)
@@ -110,7 +117,53 @@ class EncryptWindow(Window):
 
 
 class DencryptWindow(Window):
-    pass
+    def init_main_interface(self) -> None:
+        super().init_main_interface()
+
+        lbl = tk.Label(self.frame, text="Выберите файл для дешифрования")
+        lbl.pack()
+        self.read_entry = tk.Entry(self.frame)
+        self.read_entry.pack()
+        btn = tk.Button(self.frame, text="Выбрать", command=self.choose_file_to_read)
+        btn.pack()
+
+        lbl = tk.Label(self.frame, text="Введите ключ")
+        lbl.pack()
+        self.key_entry = tk.Entry(self.frame)
+        self.key_entry.pack()
+
+        btn = tk.Button(self.frame, text="Расшифровать", command=self.decrypt)
+        btn.pack()
+
+    def decrypt(self) -> None:
+        if not self.key_entry.get():
+            self.show_error("Ключ не указан, пожалуйста, введите значение")
+            return
+        elif not path.isfile(self.read_entry.get()):
+            self.show_error("Файл, который вы хотите расшифровать, не существует")
+            return
+
+        input = self.read_entry.get()
+        key = self.key_entry.get()
+        filetype = self.check_format(input)
+        if filetype == "TEXT":
+            try:
+                result = decode_txt(input, key)
+                lbl = tk.Label(self.frame, text=result)
+                lbl.pack()
+            except Exception as ex:
+                self.show_error(str(ex))
+        elif filetype == "IMAGE":
+            try:
+                result = decode_txt(input, key)
+                lbl = tk.Label(self.frame, image=result)
+                lbl.pack()
+            except Exception as ex:
+                self.show_error(str(ex))
+
+    def choose_file_to_read(self) -> None:
+        self.read_entry.delete(0, tk.END)
+        self.read_entry.insert(0, self.choose_file())
 
 
 class Application(tk.Tk):
@@ -145,7 +198,6 @@ class Application(tk.Tk):
             command=lambda: self.open_window(DencryptWindow)
         )
         btn.pack()
-
 
     def open_window(self, window) -> Window:
         self.withdraw()
