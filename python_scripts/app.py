@@ -18,11 +18,10 @@ class Window(tk.Toplevel):
         self.init_main_interface()
         self.geometry(parent.geometry())
         self.title(parent.title())
+        self.protocol('WM_DELETE_WINDOW', lambda: self.quit())
 
     def __del__(self):
         self.parent.destroy()
-        self.destroy()
-        super().__del__()
 
     def init_main_interface(self) -> None:
         self.frame = tk.Frame(
@@ -199,9 +198,9 @@ class Application(tk.Tk):
         )
         btn.pack()
 
-    def open_window(self, window) -> Window:
+    def open_window(self, window) -> None:
         self.withdraw()
-        return window(self)
+        window(self)
 
     def show(self) -> None:
         self.update()
