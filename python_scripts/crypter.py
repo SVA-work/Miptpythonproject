@@ -1,6 +1,7 @@
 import os
 from os import path
 from PIL import Image
+from io import BytesIO
 
 
 class CrypterException(Exception):
@@ -8,8 +9,8 @@ class CrypterException(Exception):
 
 
 def _apply_coding(inp: bytes, key: bytes) -> bytes:
-    if key == "":
-        raise CrypterException("Key can't be empty")
+    if key == b"":
+        return inp
 
     result = []
     for i, ch in enumerate(inp):
@@ -57,7 +58,7 @@ def decode_txt(input_path: str, key: str, encoding='utf-8') -> str:
 
 
 def decode_image(input_path: str, key: str) -> Image:
-    return Image.open(decode_file(input_path, key))
+    return Image.open(BytesIO(decode_file(input_path, key)))
 
 
 decode_to_file = encode_file
