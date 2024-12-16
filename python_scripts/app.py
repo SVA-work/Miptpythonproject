@@ -8,12 +8,13 @@ from python_scripts.windows.decrypt import DecryptWindow
 class Application(tk.Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.title("SVA-work")
+        self.title("Управление шифрованием файлов")
+        self.iconbitmap("media/icon.ico")
         self.geometry("500x400")
         self.minsize(300, 200)
-        self.init_main_interface()
+        self.__init_main_interface()
 
-    def init_main_interface(self) -> None:
+    def __init_main_interface(self) -> None:
         self.frame = tk.Frame(
             self,
             padx=16,
@@ -28,17 +29,17 @@ class Application(tk.Tk):
         btn = tk.Button(
             self.frame,
             text="Зашифровать файл",
-            command=lambda: self.open_window(EncryptWindow)
+            command=lambda: self._open_window(EncryptWindow)
         )
         btn.pack()
         btn = tk.Button(
             self.frame,
             text="Дешифровать файл",
-            command=lambda: self.open_window(DecryptWindow)
+            command=lambda: self._open_window(DecryptWindow)
         )
         btn.pack()
 
-    def open_window(self, window) -> None:
+    def _open_window(self, window) -> None:
         self.withdraw()
         window(self)
 

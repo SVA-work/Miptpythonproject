@@ -12,15 +12,16 @@ class Window(tk.Toplevel):
     def __init__(self, parent: tk.Tk):
         self.parent = parent
         super().__init__()
-        self.init_main_interface()
+        self._init_main_interface()
         self.geometry(parent.geometry())
+        self.iconbitmap("media/icon.ico")
         self.title(parent.title())
         self.protocol('WM_DELETE_WINDOW', lambda: self.quit())
 
     def __del__(self):
         self.parent.destroy()
 
-    def init_main_interface(self) -> None:
+    def _init_main_interface(self) -> None:
         self.frame = tk.Frame(
             self,
             padx=16,

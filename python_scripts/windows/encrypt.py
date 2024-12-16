@@ -7,60 +7,60 @@ from python_scripts.window import Window
 
 class EncryptWindow(Window):
     def __init__(self, parent: tk.Tk):
+        self.__key_entry = None
+        self.__write_entry = None
+        self.__read_entry = None
         super().__init__(parent)
-        self.key_entry = None
-        self.write_entry = None
-        self.read_entry = None
 
-    def init_main_interface(self) -> None:
-        super().init_main_interface()
+    def _init_main_interface(self) -> None:
+        super()._init_main_interface()
 
         lbl = tk.Label(self.frame, text="Выберите файл для шифрования")
         lbl.pack()
-        self.read_entry = tk.Entry(self.frame)
-        self.read_entry.pack()
-        btn = tk.Button(self.frame, text="Выбрать", command=self.choose_file_to_read)
+        self.__read_entry = tk.Entry(self.frame)
+        self.__read_entry.pack()
+        btn = tk.Button(self.frame, text="Выбрать", command=self._choose_file_to_read)
         btn.pack()
 
         lbl = tk.Label(self.frame, text="Выберите файл куда сохранить зашифрованное")
         lbl.pack()
-        self.write_entry = tk.Entry(self.frame)
-        self.write_entry.pack()
-        btn = tk.Button(self.frame, text="Выбрать", command=self.choose_file_to_write)
+        self.__write_entry = tk.Entry(self.frame)
+        self.__write_entry.pack()
+        btn = tk.Button(self.frame, text="Выбрать", command=self._choose_file_to_write)
         btn.pack()
 
         lbl = tk.Label(self.frame, text="Введите ключ шифрования")
         lbl.pack()
-        self.key_entry = tk.Entry(self.frame)
-        self.key_entry.pack()
+        self.__key_entry = tk.Entry(self.frame)
+        self.__key_entry.pack()
 
         btn = tk.Button(self.frame, text="Зашифровать", command=self.encrypt)
         btn.pack()
 
     def encrypt(self) -> None:
-        if not self.key_entry.get():
+        if not self.__key_entry.get():
             self.show_error("Ключ не указан, пожалуйста, введите значение")
             return
-        elif not path.isfile(self.read_entry.get()):
+        elif not path.isfile(self.__read_entry.get()):
             self.show_error("Файл, который вы хотите зашифровать, не существует")
             return
 
-        input = self.read_entry.get()
-        out = self.write_entry.get()
-        key = self.key_entry.get()
+        input_file = self.__read_entry.get()
+        out = self.__write_entry.get()
+        key = self.__key_entry.get()
         kwargs = {"allow_rewrite": True}
 
         try:
-            encode_file(input, key, out, **kwargs)
+            encode_file(input_file, key, out, **kwargs)
         except CrypterException as ex:
             self.show_error(str(ex))
         except Exception as ex:
             self.show_error(str(ex))
 
-    def choose_file_to_write(self) -> None:
-        self.write_entry.delete(0, tk.END)
-        self.write_entry.insert(0, self.choose_file())
+    def _choose_file_to_write(self) -> None:
+        self.__write_entry.delete(0, tk.END)
+        self.__write_entry.insert(0, self.choose_file())
 
-    def choose_file_to_read(self) -> None:
-        self.read_entry.delete(0, tk.END)
-        self.read_entry.insert(0, self.choose_file())
+    def _choose_file_to_read(self) -> None:
+        self.__read_entry.delete(0, tk.END)
+        self.__read_entry.insert(0, self.choose_file())
