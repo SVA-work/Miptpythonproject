@@ -1,6 +1,7 @@
 import os
 from os import path
 from PIL import Image
+from io import BytesIO
 
 
 class CrypterException(Exception):
@@ -8,12 +9,12 @@ class CrypterException(Exception):
 
 
 def _apply_coding(inp: bytes, key: bytes) -> bytes:
-    if key == "":
-        raise CrypterException("Key can't be empty")
+    if key == b"":
+        return inp
 
     result = []
     for i, ch in enumerate(inp):
-        result.append((ch ^ key[i % len(key)]).to_bytes())
+        result.append((ch ^ key[i % len(key)]).to_bytes(1, 'big', signed=False))
     return b''.join(result)
 
 
@@ -28,7 +29,7 @@ def encode_file(input_path: str, key: str, output_path: str, **kwargs):
         raise CrypterException("Key must contain only ascii chars")
     result = _apply_coding(inp, b_key)
 
-    if kwargs.get('allow_rewrite', default=False) and path.exists(output_path):
+    if not kwargs.get('allow_rewrite', False) and path.exists(output_path):
         raise CrypterException("Output file already exists. You can allow rewriting files with 'allow_rewrite=True'")
     if not path.exists(path.dirname(output_path)):
         raise CrypterException("Directory of output file doesn't exists")
@@ -36,7 +37,7 @@ def encode_file(input_path: str, key: str, output_path: str, **kwargs):
     with open(output_path, 'wb') as out:
         out.write(result)
 
-    if kwargs.get('delete_input', default=False):
+    if kwargs.get('delete_input', False):
         os.remove(input_path)
 
 
@@ -57,7 +58,7 @@ def decode_txt(input_path: str, key: str, encoding='utf-8') -> str:
 
 
 def decode_image(input_path: str, key: str) -> Image:
-    return Image.open(decode_file(input_path, key))
+    return Image.open(BytesIO(decode_file(input_path, key)))
 
 
 decode_to_file = encode_file

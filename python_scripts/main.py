@@ -1,4 +1,3 @@
-import crypter
 from app import Application
 
 
