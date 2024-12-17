@@ -51,6 +51,9 @@ class Window(tk.Toplevel):
     def show_error(self, msg: str) -> None:
         mb.showerror("Ошибка", msg)
 
+    def show_info(self, msg: str) -> None:
+        mb.showinfo("Успешная операция", msg)
+
     def close(self) -> None:
         self.destroy()
         self.parent.show()

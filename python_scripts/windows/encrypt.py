@@ -52,6 +52,7 @@ class EncryptWindow(Window):
 
         try:
             encode_file(input_file, key, out, **kwargs)
+            self.show_info("Файл успешно зашифрован")
         except CrypterException as ex:
             self.show_error(str(ex))
         except Exception as ex:
