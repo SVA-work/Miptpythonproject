@@ -6,6 +6,23 @@ from python_scripts.window import Window
 
 
 class EncryptWindow(Window):
+    """
+    Класс EncryptWindow для шифрования файлов.
+
+    Этот класс наследует `Window` и предоставляет графический интерфейс для выбора файла,
+    куда будет сохранен зашифрованный файл, а также для ввода ключа шифрования.
+
+    Attributes:
+        __key_entry (tk.Entry): Поле ввода для ключа шифрования.
+        __write_entry (tk.Entry): Поле ввода пути сохранения зашифрованного файла.
+        __read_entry (tk.Entry): Поле ввода пути исходного файла для шифрования.
+
+    Methods:
+        encrypt(): Выполняет шифрование файла на основе указанных параметров.
+        _choose_file_to_write(): Вызывает диалог выбора файла для сохранения зашифрованного файла.
+        _choose_file_to_read(): Вызывает диалог выбора исходного файла для шифрования.
+    """
+
     def __init__(self, parent: tk.Tk):
         self.__key_entry = None
         self.__write_entry = None
@@ -38,6 +55,17 @@ class EncryptWindow(Window):
         btn.pack()
 
     def encrypt(self) -> None:
+        """
+        Выполняет шифрование файла.
+
+        Проверяет наличие ключа шифрования и исходного файла.
+        Вызывает метод `encode_file` для шифрования. Результат сохраняется в указанный путь.
+
+        Exceptions:
+            CrypterException: Исключение, связанное с ошибками шифрования.
+            Exception: Прочие исключения.
+        """
+
         if not self.__key_entry.get():
             self.show_error("Ключ не указан, пожалуйста, введите значение")
             return
@@ -59,9 +87,17 @@ class EncryptWindow(Window):
             self.show_error(str(ex))
 
     def _choose_file_to_write(self) -> None:
+        """
+        Открывает диалог выбора файла для указания пути сохранения зашифрованного файла.
+        """
+
         self.__write_entry.delete(0, tk.END)
         self.__write_entry.insert(0, self.choose_file())
 
     def _choose_file_to_read(self) -> None:
+        """
+        Открывает диалог выбора исходного файла для шифрования.
+        """
+
         self.__read_entry.delete(0, tk.END)
         self.__read_entry.insert(0, self.choose_file())
